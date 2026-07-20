@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Builld/">
+    <File Path=".github/workflows/dotnet.yml" />
+    <File Path="Directory.Packages.props" />
+    <File Path="README.md" />
+    <File Path="src/Directory.Build.props" />
+  </Folder>
+  <Project Path="src/ProblemJson/ProblemJson.csproj" Id="bdb2cc37-42cc-4eaa-8b7d-9dd10b8f1215" />
+  <Project Path="test/ProblemJson.Tests/ProblemJson.Tests.csproj" Id="e06e6936-bf2d-4ed7-bd64-d1a3eab4ef0e" />
+</Solution>
