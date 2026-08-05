@@ -6,7 +6,7 @@ namespace ProblemJson.Tests;
 public class ProblemDetailsExceptionTests
 {
     [Fact]
-    public void MessageUsesDetailWhenAvailable()
+    public void MessageCombinesTitleAndDetail()
     {
         var problem = new ProblemDetails
         {
@@ -16,8 +16,27 @@ public class ProblemDetailsExceptionTests
 
         var exception = new ProblemDetailsException(problem);
 
-        Assert.Equal("Your current balance is 30.", exception.Message);
+        Assert.Equal("You do not have enough credit. Your current balance is 30.", exception.Message);
         Assert.Same(problem, exception.ProblemDetails);
+    }
+
+    [Fact]
+    public void MessageIncludesStatusInstanceAndType()
+    {
+        var problem = new ProblemDetails
+        {
+            Status = 404,
+            Title = "Order not found.",
+            Detail = "No order with id 42.",
+            Instance = "/orders/42",
+            Type = "https://example.com/probs/not-found",
+        };
+
+        var exception = new ProblemDetailsException(problem);
+
+        Assert.Equal(
+            "404 NotFound: Order not found. No order with id 42. (Instance: /orders/42) (Type: https://example.com/probs/not-found)",
+            exception.Message);
     }
 
     [Fact]
@@ -37,7 +56,7 @@ public class ProblemDetailsExceptionTests
 
         var exception = new ProblemDetailsException("explicit message", problem);
 
-        Assert.Equal("explicit message", exception.Message);
+        Assert.Equal("400 BadRequest: explicit message", exception.Message);
     }
 
     [Fact]

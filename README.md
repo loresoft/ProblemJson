@@ -8,6 +8,10 @@ responses, as defined by [RFC 9457 (Problem Details for HTTP APIs)](https://www.
 [![Coverage Status](https://coveralls.io/repos/github/loresoft/ProblemJson/badge.svg?branch=main)](https://coveralls.io/github/loresoft/ProblemJson?branch=main)
 [![NuGet](https://img.shields.io/nuget/v/ProblemJson.svg)](https://www.nuget.org/packages/ProblemJson/)
 
+> [!NOTE]
+> There is an outstanding .NET API proposal to add this functionality to the
+> `System.Net.Http.Json` library: [dotnet/runtime#131046](https://github.com/dotnet/runtime/issues/131046).
+
 ## Features
 
 - Detect problem responses via the `Content-Type` header (`application/problem+json`).

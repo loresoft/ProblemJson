@@ -26,7 +26,7 @@ public class ProblemDetailsTests
             Instance = "/account/12345/msgs/abc",
         };
 
-        var json = JsonSerializer.Serialize(problem, ProblemDetailsSerializerContext.Default.ProblemDetails);
+        var json = JsonSerializer.Serialize(problem, ProblemJsonSerializerContext.Default.ProblemDetails);
 
         var expected = "{\"type\":\"https://example.com/probs/out-of-credit\","
             + "\"title\":\"You do not have enough credit.\","
@@ -42,7 +42,7 @@ public class ProblemDetailsTests
     {
         var problem = new ProblemDetails { Status = 404 };
 
-        var json = JsonSerializer.Serialize(problem, ProblemDetailsSerializerContext.Default.ProblemDetails);
+        var json = JsonSerializer.Serialize(problem, ProblemJsonSerializerContext.Default.ProblemDetails);
 
         Assert.Equal("{\"status\":404}", json);
     }
@@ -56,7 +56,7 @@ public class ProblemDetailsTests
             + "\"detail\":\"Your current balance is 30.\","
             + "\"instance\":\"/account/12345/msgs/abc\"}";
 
-        var problem = JsonSerializer.Deserialize(json, ProblemDetailsSerializerContext.Default.ProblemDetails);
+        var problem = JsonSerializer.Deserialize(json, ProblemJsonSerializerContext.Default.ProblemDetails);
 
         Assert.NotNull(problem);
         Assert.Equal("https://example.com/probs/out-of-credit", problem.Type);
@@ -71,7 +71,7 @@ public class ProblemDetailsTests
     {
         var json = "{\"status\":403,\"balance\":30,\"accounts\":[\"/account/12345\"]}";
 
-        var problem = JsonSerializer.Deserialize(json, ProblemDetailsSerializerContext.Default.ProblemDetails);
+        var problem = JsonSerializer.Deserialize(json, ProblemJsonSerializerContext.Default.ProblemDetails);
 
         Assert.NotNull(problem);
         Assert.Equal(403, problem.Status);
@@ -85,8 +85,8 @@ public class ProblemDetailsTests
     {
         var json = "{\"status\":403,\"balance\":30}";
 
-        var problem = JsonSerializer.Deserialize(json, ProblemDetailsSerializerContext.Default.ProblemDetails);
-        var serialized = JsonSerializer.Serialize(problem!, ProblemDetailsSerializerContext.Default.ProblemDetails);
+        var problem = JsonSerializer.Deserialize(json, ProblemJsonSerializerContext.Default.ProblemDetails);
+        var serialized = JsonSerializer.Serialize(problem!, ProblemJsonSerializerContext.Default.ProblemDetails);
 
         Assert.Equal(json, serialized);
     }

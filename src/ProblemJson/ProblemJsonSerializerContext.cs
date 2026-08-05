@@ -6,4 +6,4 @@ namespace System.Net.Http.Json;
 /// Source-generated <see cref="JsonSerializerContext"/> for <see cref="ProblemDetails"/>.
 /// </summary>
 [JsonSerializable(typeof(ProblemDetails))]
-public partial class ProblemDetailsSerializerContext : JsonSerializerContext;
+public partial class ProblemJsonSerializerContext : JsonSerializerContext;

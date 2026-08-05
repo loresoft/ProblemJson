@@ -82,7 +82,7 @@ public static class ProblemJsonExtensions
             return null;
 
         return await response.Content
-            .ReadFromJsonAsync(ProblemDetailsSerializerContext.Default.ProblemDetails, cancellationToken)
+            .ReadFromJsonAsync(ProblemJsonSerializerContext.Default.ProblemDetails, cancellationToken)
             .ConfigureAwait(false);
     }
 

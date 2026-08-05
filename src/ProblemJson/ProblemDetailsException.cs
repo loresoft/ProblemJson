@@ -1,4 +1,4 @@
-using System.Net.Http;
+using System.Text;
 
 namespace System.Net.Http.Json;
 
@@ -8,10 +8,11 @@ namespace System.Net.Http.Json;
 /// <see href="https://www.rfc-editor.org/rfc/rfc9457">RFC 9457</see>.
 /// </summary>
 /// <remarks>
-/// The exception message is derived from the supplied <see cref="ProblemDetails"/> when available,
-/// preferring the problem's <see cref="System.Net.Http.Json.ProblemDetails.Detail"/>, then its
-/// <see cref="System.Net.Http.Json.ProblemDetails.Title"/>, then the explicitly provided message,
-/// and finally a message built from the HTTP status code.
+/// The exception message is composed from the supplied <see cref="ProblemDetails"/> when available,
+/// combining the HTTP status code with the problem's <see cref="System.Net.Http.Json.ProblemDetails.Title"/>,
+/// <see cref="System.Net.Http.Json.ProblemDetails.Detail"/>, <see cref="System.Net.Http.Json.ProblemDetails.Instance"/>,
+/// and <see cref="System.Net.Http.Json.ProblemDetails.Type"/>. The explicitly provided message is used when the
+/// problem has neither a title nor a detail, for example: <c>404 NotFound: Order not found. No order with id 42. (Instance: /orders/42)</c>.
 /// </remarks>
 [Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1194:Implement exception constructors", Justification = "Constructors are intentionally limited for this exception.")]
 public class ProblemDetailsException : HttpRequestException
@@ -89,10 +90,53 @@ public class ProblemDetailsException : HttpRequestException
         string? message = null,
         HttpStatusCode? statusCode = null)
     {
-        return problemDetails?.Detail
-            ?? problemDetails?.Title
-            ?? message
-            ?? GetStatusMessage(problemDetails, statusCode);
+        var statusMessage = GetStatusMessage(problemDetails, statusCode);
+        if (problemDetails is null && string.IsNullOrEmpty(message))
+            return statusMessage;
+
+        var builder = new StringBuilder(128);
+
+        AppendPart(builder, problemDetails?.Title);
+        AppendPart(builder, problemDetails?.Detail);
+
+        if (builder.Length == 0)
+            AppendPart(builder, message);
+
+        AppendPart(builder, problemDetails?.Instance, "Instance");
+        AppendPart(builder, problemDetails?.Type, "Type");
+
+        if (builder.Length == 0)
+            return statusMessage;
+
+        if (statusMessage is null)
+            return builder.ToString();
+
+        return $"{statusMessage}: {builder}";
+    }
+
+    private static void AppendPart(
+        StringBuilder builder,
+        string? value,
+        string? named = null)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return;
+
+        if (builder.Length > 0)
+            builder.Append(' ');
+
+        if (string.IsNullOrWhiteSpace(named))
+        {
+            builder.Append(value);
+            return;
+        }
+
+        builder
+            .Append('(')
+            .Append(named)
+            .Append(": ")
+            .Append(value)
+            .Append(')');
     }
 
     private static string? GetStatusMessage(

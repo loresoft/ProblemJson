@@ -122,7 +122,8 @@ public class ProblemJsonExtensionsTests
         var exception = await Assert.ThrowsAsync<ProblemDetailsException>(
             () => response.ThrowIfProblemJsonAsync(CancellationToken.None));
 
-        Assert.Equal("Your current balance is 30.", exception.Message);
+        Assert.Contains("403 Forbidden", exception.Message);
+        Assert.Contains("Your current balance is 30.", exception.Message);
         Assert.NotNull(exception.ProblemDetails);
         Assert.Equal(403, exception.ProblemDetails.Status);
     }
